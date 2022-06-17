@@ -1,3 +1,7 @@
+#define sel_type int // change sel_type to your desirable type.
+#define cli__sel_type_convertor(string) atoi(string)
+#define cli__sel_type_default_value 1
+
 #ifndef STDBOOL
     #include <stdbool.h>
     #define STDBOOL 1
@@ -19,13 +23,18 @@
     #define STDIO 1
 #endif
 
-#ifndef S_NODE
-    #include "node.h"
-    #define S_NODE 1
+#ifndef TYPE
+    #include "/Users/chaitanyashinge/Desktop/data_structures/c/type.c"
+    #define TYPE 1
 #endif
 
 #define ARE_STRINGS_EQUAL(s1, s2) (strcmp(s1, s2) ? 0 : 1)
 #define ARE_STRING_SLICES_EQUAL(s1, s2, n) (strncmp(s1, s2, n) ? 0 : 1)
+
+typedef struct s_node {
+    sel_type info;
+    struct s_node* next;
+} s_node;
 
 s_node* create_s_node() {
     s_node* n;
@@ -52,7 +61,7 @@ stack sCreate() {
     return *s;
 }
 
-bool push(stack* s, int data) {
+bool push(stack* s, sel_type data) {
     s_node *newQNode = create_s_node();
     newQNode->info = data;
     if(!s->top) {
@@ -68,7 +77,7 @@ bool is_empty(stack s) {
     return (bool) !(s.base);
 }
 
-int print(stack s) {
+bool print(stack s) {
     s_node* traverser = s.top;
     puts("    top");
     printf("|-> ");
@@ -80,14 +89,14 @@ int print(stack s) {
     return true;
 }
 
-int peek(stack s) {
+sel_type peek(stack s) {
     if(!is_empty(s))
         return s.top->info;
     return 0;
 }
 
-int pop(stack* s) {
-    int data = peek(*s);
+sel_type pop(stack* s) {
+    sel_type data = peek(*s);
     if(s->top) {
         s_node* served = s->top;
         s->top = s->top->next;
@@ -109,7 +118,8 @@ bool delete(stack* s) {
 }
 
 int cli() {
-    int inputs, operand;
+    int inputs;
+    sel_type operand;
     stack s = sCreate();
     puts("Creating a stack");
     char action[40], *operator, *afterOperator;
@@ -135,7 +145,7 @@ int cli() {
             }
         } else if(ARE_STRINGS_EQUAL(operator, "pop")) {
             afterOperator = strtok(NULL, " ");
-            operand = afterOperator ? atoi(afterOperator) : 1;
+            operand = afterOperator ? cli__sel_type_convertor(afterOperator) : cli__sel_type_default_value;
             while(operand-- && !is_empty(s))
                 printf("%d\n", pop(&s));
             operand = 0;
